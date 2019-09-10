@@ -5,29 +5,42 @@ import java.io.Serializable;
 
 
 public class Student implements Serializable {
-    private String firstName;
-    private String secondName;
-    private String faculty;
+    private String name;
     private int course;
     private int age;
+    private int id;
 
-
-    public Student(String firstName, String secondName, String faculty, int course, int age) {
-        this.firstName = firstName;
-        this.secondName = secondName;
-        this.faculty = faculty;
+    public Student(String name, int course, int age, int id) {
+        this.name = name;
         this.course = course;
         this.age = age;
+        this.id = id;
     }
 
     public Student() {
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String toString() {
+        return name + " " + age;
     }
 
-    public String toString() {
-        return firstName + " " + secondName;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setCourse(int course) {
+        this.course = course;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
