@@ -22,7 +22,7 @@ public class Client {
     }
 
     public void sendRequest(Socket socket) {
-        System.out.println("CHOOSE OPTION: studentinfo/makechanges/createnew");
+        System.out.println("CHOOSE OPTION: studentinfo/makechanges/createnew/showall");
         Scanner scanner = new Scanner(System.in);
         String message = scanner.nextLine();
 
@@ -31,20 +31,28 @@ public class Client {
         String getServerMessage = Message.receiveMessage(socket);
         System.out.println(getServerMessage);
 
-        if (getServerMessage.equals("EnterName:")) {
-            getStudentInfo(socket);
+        try {
+            if (getServerMessage.equals("EnterName:")) {
+                getStudentInfo(socket);
 
-        } else if (getServerMessage.equals("AddNew:")) {
-            addNewStudent(socket);
+            } else if (getServerMessage.equals("AddNew:")) {
+                addNewStudent(socket);
 
-        } else if (getServerMessage.equals("ShowAll:")) {
-            showAllStudents(socket);
+            } else if (getServerMessage.equals("ShowAll:")) {
+                showAllStudents(socket);
 
-        } else if (getServerMessage.equals("MakeChanges:")) {
-            changeStudentData(socket);
+            } else if (getServerMessage.equals("MakeChanges:")) {
+                changeStudentData(socket);
 
-        } else {
-            System.out.println("Wrong enter.");
+            } else {
+                System.out.println("Wrong enter.");
+            }
+        } finally {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -89,10 +97,10 @@ public class Client {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter name: ");
         student.setName(scanner.nextLine());
-        System.out.println("Enter course: ");
-        student.setCourse(scanner.nextInt());
         System.out.println("Enter age: ");
         student.setAge(scanner.nextInt());
+        System.out.println("Enter course: ");
+        student.setCourse(scanner.nextInt());
         System.out.println("Enter id: ");
         student.setId(scanner.nextInt());
 
@@ -109,7 +117,6 @@ public class Client {
 
 
     public static void main(String[] args) {
-        Student student = new Student("Aleh Kastsiukovich", 4, 22, 112233);
         Client client = new Client();
 
         try {

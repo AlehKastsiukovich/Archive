@@ -11,13 +11,12 @@ import java.util.List;
 
 
 public class Server {
-    private List<Student> studentList;
+    private static  List<Student> students = new ArrayList<>();
     private ServerSocket serverSocket;
 
     public Server(int port) {
         try {
             serverSocket = new ServerSocket(port);
-            studentList = new ArrayList<>();
             System.out.println("Server was started!");
         } catch (IOException e) {
             e.printStackTrace();
@@ -39,19 +38,27 @@ public class Server {
 
     public void processRequest(Socket socket) {
         String receiveMessage = Message.receiveMessage(socket);
+        try {
+            if (receiveMessage.equals("studentinfo")) {
+                sendStudentInfo(socket);
 
-        if (receiveMessage.equals("studentinfo")) {
-            sendStudentInfo(socket);
+            } else if (receiveMessage.equals("makechanges")) {
+                changeStudentData(socket);
 
-        } else if (receiveMessage.equals("makechanges")) {
-            changeStudentData(socket);
+            } else if (receiveMessage.equals("createnew")) {
+                addNewStudent(socket);
 
-        } else if (receiveMessage.equals("createnew")) {
-            addNewStudent(socket);
-
-        } else if (receiveMessage.equals("showall")) {
-            showAllStudents(socket);
+            } else if (receiveMessage.equals("showall")) {
+                showAllStudents(socket);
+            }
+        } finally {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
     }
 
     public void changeStudentData(Socket socket) {
@@ -59,7 +66,7 @@ public class Server {
         Message.sendMessage(socket, message);
         String studentName = Message.receiveMessage(socket);
 
-            for (Student student: studentList) {
+            for (Student student: students) {
 
                 if (student.getName().equals(studentName)) {
                     Message.sendMessage(socket, student.toString());
@@ -67,6 +74,8 @@ public class Server {
                     System.out.println(student.toString());
 
                     student = readStudent(socket);
+                    XmlArchive.writeToXml(students);
+
                     System.out.println("Student info after changes:");
                     System.out.println(student.toString());
                 } else {
@@ -81,7 +90,7 @@ public class Server {
 
         try {
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-            out.writeObject(studentList);
+            out.writeObject(students);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -105,7 +114,8 @@ public class Server {
         }
 
         if (recStudent != null) {
-            studentList.add(recStudent);
+            students.add(recStudent);
+            XmlArchive.writeToXml(students);
             System.out.println("Student " +recStudent.getName() + " was added.");
         }
     }
@@ -115,7 +125,7 @@ public class Server {
         Message.sendMessage(socket, message);
         String studentName = Message.receiveMessage(socket);
 
-        Student studenttoSend = findStudentByName(studentList, studentName);
+        Student studenttoSend = findStudentByName(students, studentName);
 
         if (studenttoSend!=null) {
             Message.sendMessage(socket, studenttoSend.toString());
@@ -125,7 +135,7 @@ public class Server {
     }
 
     public Student findStudentByName(List<Student> students, String name) {
-            for (Student student: studentList) {
+            for (Student student: Server.students) {
                 if (student.getName().equals(name)) {
                     System.out.println(student.toString());
                     return student;
@@ -137,13 +147,17 @@ public class Server {
 
     public static void main(String[] args) {
 
-            try {
+           try {
                 Server server = new Server(8000);
-                server.studentList.add(new Student("Aleh Kastsiukovich", 4, 31, 322));
+
+                if (XmlArchive.getFILE().exists()) {
+                   students = XmlArchive.readFromXml();
+                }
+
                 Socket socket = server.serverSocket.accept();
                 server.processRequest(socket);
-            } catch (IOException e) {
+           } catch (IOException e) {
                 e.printStackTrace();
-            }
+           }
     }
 }

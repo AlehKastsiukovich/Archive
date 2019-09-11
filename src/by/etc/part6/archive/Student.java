@@ -6,14 +6,14 @@ import java.io.Serializable;
 
 public class Student implements Serializable {
     private String name;
-    private int course;
     private int age;
+    private int course;
     private int id;
 
-    public Student(String name, int course, int age, int id) {
+    public Student(String name, int age, int course, int id) {
         this.name = name;
-        this.course = course;
         this.age = age;
+        this.course = course;
         this.id = id;
     }
 
@@ -42,5 +42,17 @@ public class Student implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public int getCourse() {
+        return course;
+    }
+
+    public int getId() {
+        return id;
     }
 }
