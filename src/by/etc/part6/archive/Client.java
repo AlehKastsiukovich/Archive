@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -23,7 +22,7 @@ public class Client {
     }
 
     public void sendRequest(Socket socket) {
-        System.out.println("CHOOSE OPTION: studentinfo/makechanges/createnew/showall");
+        System.out.println("CHOOSE OPTION: studentinfo/makechanges/createnew");
         Scanner scanner = new Scanner(System.in);
         String message = scanner.nextLine();
 
@@ -42,11 +41,21 @@ public class Client {
             showAllStudents(socket);
 
         } else if (getServerMessage.equals("MakeChanges:")) {
+            changeStudentData(socket);
 
+        } else {
+            System.out.println("Wrong enter.");
         }
     }
 
-    public void changeStudentData() {
+    public void changeStudentData(Socket socket) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter name of student which info will be changed:");
+        String studName = scanner.nextLine();
+        Message.sendMessage(socket, studName);
+        System.out.println("Student data to be changed: " + Message.receiveMessage(socket));
+
+        addNewStudent(socket);
 
     }
 

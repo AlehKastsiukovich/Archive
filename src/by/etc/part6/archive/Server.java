@@ -18,17 +18,16 @@ public class Server {
         try {
             serverSocket = new ServerSocket(port);
             studentList = new ArrayList<>();
-            System.out.println("Server was created!");
+            System.out.println("Server was started!");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public Student readStudent() {
+    public Student readStudent(Socket socket) {
         Student student = null;
 
         try {
-            Socket socket = serverSocket.accept();
             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
             student = (Student) objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
@@ -45,7 +44,7 @@ public class Server {
             sendStudentInfo(socket);
 
         } else if (receiveMessage.equals("makechanges")) {
-            System.out.println("changes");
+            changeStudentData(socket);
 
         } else if (receiveMessage.equals("createnew")) {
             addNewStudent(socket);
@@ -53,6 +52,27 @@ public class Server {
         } else if (receiveMessage.equals("showall")) {
             showAllStudents(socket);
         }
+    }
+
+    public void changeStudentData(Socket socket) {
+        String message = Message.message("MakeChanges:");
+        Message.sendMessage(socket, message);
+        String studentName = Message.receiveMessage(socket);
+
+            for (Student student: studentList) {
+
+                if (student.getName().equals(studentName)) {
+                    Message.sendMessage(socket, student.toString());
+                    System.out.println("Student info before changes:");
+                    System.out.println(student.toString());
+
+                    student = readStudent(socket);
+                    System.out.println("Student info after changes:");
+                    System.out.println(student.toString());
+                } else {
+                    System.out.println("Student does not exist.");
+                }
+            }
     }
 
     public void showAllStudents(Socket socket) {
@@ -100,7 +120,7 @@ public class Server {
         if (studenttoSend!=null) {
             Message.sendMessage(socket, studenttoSend.toString());
         } else {
-            System.out.println("student does not exist.");
+            System.out.println("Student does not exist.");
         }
     }
 
@@ -119,7 +139,7 @@ public class Server {
 
             try {
                 Server server = new Server(8000);
-                server.studentList.add(new Student("Aleh", 4, 31, 322));
+                server.studentList.add(new Student("Aleh Kastsiukovich", 4, 31, 322));
                 Socket socket = server.serverSocket.accept();
                 server.processRequest(socket);
             } catch (IOException e) {

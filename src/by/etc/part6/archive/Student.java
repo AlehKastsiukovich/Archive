@@ -21,7 +21,7 @@ public class Student implements Serializable {
     }
 
     public String toString() {
-        return name + " " + age;
+        return name + "/" + "age: "+ age + "/" + "course: " +course +  "/" + "id: " + id;
     }
 
     public String getName() {
