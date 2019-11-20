@@ -20,9 +20,6 @@ public class Student implements Serializable {
     public Student() {
     }
 
-    public String toString() {
-        return name + "/" + "age: "+ age + "/" + "course: " +course +  "/" + "id: " + id;
-    }
 
     public String getName() {
         return name;
@@ -54,5 +51,9 @@ public class Student implements Serializable {
 
     public int getId() {
         return id;
+    }
+
+    public String toString() {
+        return name + "/" + "age: "+ age + "/" + "course: " +course +  "/" + "id: " + id;
     }
 }

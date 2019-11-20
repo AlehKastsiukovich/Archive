@@ -11,7 +11,7 @@ import java.util.List;
 
 
 public class Server {
-    private static  List<Student> students = new ArrayList<>();
+    private static List<Student> students = new ArrayList<>();
     private ServerSocket serverSocket;
 
     public Server(int port) {
@@ -38,6 +38,7 @@ public class Server {
 
     public void processRequest(Socket socket) {
         String receiveMessage = Message.receiveMessage(socket);
+
         try {
             if (receiveMessage.equals("studentinfo")) {
                 sendStudentInfo(socket);
@@ -64,24 +65,25 @@ public class Server {
     public void changeStudentData(Socket socket) {
         String message = Message.message("MakeChanges:");
         Message.sendMessage(socket, message);
+
         String studentName = Message.receiveMessage(socket);
 
-            for (Student student: students) {
+        for (Student student : students) {
 
-                if (student.getName().equals(studentName)) {
-                    Message.sendMessage(socket, student.toString());
-                    System.out.println("Student info before changes:");
-                    System.out.println(student.toString());
+            if (student.getName().equals(studentName)) {
+                Message.sendMessage(socket, student.toString());
+                System.out.println("Student info before changes:");
+                System.out.println(student.toString());
 
-                    student = readStudent(socket);
-                    XmlArchive.writeToXml(students);
+                student = readStudent(socket);
+                XmlArchive.writeToXml(students);
 
-                    System.out.println("Student info after changes:");
-                    System.out.println(student.toString());
-                } else {
-                    System.out.println("Student does not exist.");
-                }
+                System.out.println("Student info after changes:");
+                System.out.println(student.toString());
+            } else {
+                System.out.println("Student does not exist.");
             }
+        }
     }
 
     public void showAllStudents(Socket socket) {
@@ -116,7 +118,7 @@ public class Server {
         if (recStudent != null) {
             students.add(recStudent);
             XmlArchive.writeToXml(students);
-            System.out.println("Student " +recStudent.getName() + " was added.");
+            System.out.println("Student " + recStudent.getName() + " was added.");
         }
     }
 
@@ -127,7 +129,7 @@ public class Server {
 
         Student studenttoSend = findStudentByName(students, studentName);
 
-        if (studenttoSend!=null) {
+        if (studenttoSend != null) {
             Message.sendMessage(socket, studenttoSend.toString());
         } else {
             System.out.println("Student does not exist.");
@@ -135,29 +137,28 @@ public class Server {
     }
 
     public Student findStudentByName(List<Student> students, String name) {
-            for (Student student: Server.students) {
-                if (student.getName().equals(name)) {
-                    System.out.println(student.toString());
-                    return student;
-                }
+        for (Student student : Server.students) {
+            if (student.getName().equals(name)) {
+                System.out.println(student.toString());
+                return student;
             }
-            return null;
+        }
+        return null;
     }
 
 
     public static void main(String[] args) {
+        try {
+            Server server = new Server(8000);
 
-           try {
-                Server server = new Server(8000);
+            if (XmlArchive.getFILE().exists()) {
+                students = XmlArchive.readFromXml();
+            }
 
-                if (XmlArchive.getFILE().exists()) {
-                   students = XmlArchive.readFromXml();
-                }
-
-                Socket socket = server.serverSocket.accept();
-                server.processRequest(socket);
-           } catch (IOException e) {
-                e.printStackTrace();
-           }
+            Socket socket = server.serverSocket.accept();
+            server.processRequest(socket);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

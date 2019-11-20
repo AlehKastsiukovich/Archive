@@ -8,10 +8,18 @@ import java.net.Socket;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * создайте клиент-серверное приложение “Архив”. Общие требования к заданию:
+ * В архиве хранятся Дела (например, студентов). Архив находится на сервере.
+ * Клиент, в зависимости от прав, может запросить дело на просмотр, внести в него изменения,
+ * или создать новое дело. Требования к коду лабораторной работы:
+ * Для реализации сетевого соединения используйте сокеты.
+ * Формат хранения данных на сервере – xml-файлы.
+ */
 
 public class Client {
 
-    public void sendData(Socket socket, Student student) {
+    public void sendStudentData(Socket socket, Student student) {
         try {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             objectOutputStream.writeObject(student);
@@ -22,8 +30,10 @@ public class Client {
     }
 
     public void sendRequest(Socket socket) {
-        System.out.println("CHOOSE OPTION: studentinfo/makechanges/createnew/showall");
+        @SuppressWarnings("resource")
         Scanner scanner = new Scanner(System.in);
+
+        System.out.println("CHOOSE OPTION: studentinfo/makechanges/createnew/showall");
         String message = scanner.nextLine();
 
         Message.sendMessage(socket, message);
@@ -57,14 +67,16 @@ public class Client {
     }
 
     public void changeStudentData(Socket socket) {
+        @SuppressWarnings("resource")
         Scanner scanner = new Scanner(System.in);
+
         System.out.println("Enter name of student which info will be changed:");
         String studName = scanner.nextLine();
+
         Message.sendMessage(socket, studName);
         System.out.println("Student data to be changed: " + Message.receiveMessage(socket));
 
         addNewStudent(socket);
-
     }
 
     public void showAllStudents(Socket socket) {
@@ -83,7 +95,7 @@ public class Client {
 
         if (list != null) {
             System.out.println("Student list: ");
-            for (Student student: list) {
+            for (Student student : list) {
                 System.out.println(student.toString());
             }
         } else {
@@ -92,23 +104,29 @@ public class Client {
     }
 
     public void addNewStudent(Socket socket) {
+        @SuppressWarnings("resource")
+        Scanner scanner = new Scanner(System.in);
         Student student = new Student();
 
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Enter name: ");
         student.setName(scanner.nextLine());
+
         System.out.println("Enter age: ");
         student.setAge(scanner.nextInt());
+
         System.out.println("Enter course: ");
         student.setCourse(scanner.nextInt());
+
         System.out.println("Enter id: ");
         student.setId(scanner.nextInt());
 
-        sendData(socket, student);
+        sendStudentData(socket, student);
     }
 
     public void getStudentInfo(Socket socket) {
+        @SuppressWarnings("resource")
         Scanner scanner = new Scanner(System.in);
+
         String studName = scanner.nextLine();
         Message.sendMessage(socket, studName);
 
@@ -122,9 +140,9 @@ public class Client {
         try {
             Socket socket = new Socket("127.0.0.1", 8000);
             client.sendRequest(socket);
-        } catch (IOException e) {
+        } catch (
+                IOException e) {
             e.printStackTrace();
         }
-
     }
 }

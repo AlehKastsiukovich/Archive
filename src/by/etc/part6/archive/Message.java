@@ -5,20 +5,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Scanner;
 
 
 public class Message {
-
-    /*
-    public static String message() {
-        String message = null;
-        Scanner scanner = new Scanner(System.in);
-        message = scanner.nextLine();
-
-        return message;
-    }
-     */
 
     public static String message(String mes) {
         String message = mes;
@@ -40,8 +29,8 @@ public class Message {
 
     public static void sendMessage(Socket socket, String message) {
         try {
-        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-        out.writeObject(message);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            out.writeObject(message);
         } catch (IOException e) {
             e.printStackTrace();
         }

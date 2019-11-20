@@ -27,22 +27,22 @@ public class XmlArchive {
     }
 
     public static List<Student> readFromXml() {
-            try {
-                FileInputStream fis = new FileInputStream(FILE);
-                XMLDecoder decoder = new XMLDecoder(fis);
+        try {
+            FileInputStream fis = new FileInputStream(FILE);
+            XMLDecoder decoder = new XMLDecoder(fis);
 
-                List<Student> list = (List<Student>) decoder.readObject();
+            List<Student> list = (List<Student>) decoder.readObject();
 
-                decoder.close();
-                fis.close();
+            decoder.close();
+            fis.close();
 
-                if (list != null) {
-                    return list;
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (list != null) {
+                return list;
             }
-            return null;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
